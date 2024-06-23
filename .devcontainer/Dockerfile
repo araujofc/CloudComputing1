@@ -11,3 +11,18 @@ RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requ
 # RUN apt-get update \
 #     && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
+# Use a imagem base do Python
+FROM python:3.9-slim
+
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /code
+
+# Copie os arquivos de requisitos e instale as dependências
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copie o código da aplicação para o contêiner
+COPY . .
+
+# Comando para rodar a aplicação usando Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "web_project.wsgi:application"]
